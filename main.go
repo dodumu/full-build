@@ -1,37 +1,29 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"user/user"
 )
 
 func main() {
 	person := user.User{
-		Name:  "David",
+		Name:  "Abigail",
 		Age:   29,
-		Email: "davidrobertq2@gmail.com",
+		Email: "Aq2@gmail.com",
 	}
 
-	val, err := json.Marshal(person)
+	users, err := user.LoadUsers("some.json")
+
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// fmt.Println(string(val))
+	fmt.Println(user.FindUser(users, "davidrobertq2@gmail.com"))
 
-	err = os.WriteFile("user.json", val, 0644)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	// person.Display()
-	// person.Birthday()
-	// person.Display()
-	// person.UpdateEmail("brucenic12@gmail.com")
-	// person.Display()
-	// person.Rename("Lucky")
-	// person.Display()
+	add := user.AddUser(users, person)
+
+	user.SaveUsers("some.json", add)
+
+	fmt.Println(user.RemoveUser(person, users))
 }
