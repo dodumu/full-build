@@ -21,9 +21,9 @@ func main() {
 
 	fmt.Println(user.FindUser(users, "davidrobertq2@gmail.com"))
 
-	add := user.AddUser(users, person)
+	users = user.AddUser(users, person)
 
-	user.SaveUsers("some.json", add)
+	user.SaveUsers("some.json", users)
 
 	fmt.Println(user.RemoveUser(person, users))
 }
