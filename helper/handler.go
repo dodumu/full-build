@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 var dataFile = "user.json"
@@ -75,4 +76,33 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func EditUser(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/user.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	path := r.URL.Path
+	path = strings.TrimPrefix(path, "/edit/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	users, err := LoadUsers(dataFile)
+	if err != nil {
+		users = []User{}
+	}
+	target := FindUserByID(users, id)
+	if target == nil {
+		http.Error(w, "User Not Found", http.StatusNotFound)
+		return
+	}
+	err = tmpl.Execute(w, target)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
