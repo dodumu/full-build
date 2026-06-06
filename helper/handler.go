@@ -155,3 +155,36 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	users, err := LoadUsers(dataFile)
+	if err != nil {
+		// users = []User{}
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	path := r.URL.Path
+	path = strings.TrimPrefix(path, "/delete/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	users, ok := RemoveUserByID(users, id)
+	if !ok {
+		http.Error(w, "Unable to delete user", http.StatusNotModified)
+		return
+	}
+
+	err = SaveUsers(dataFile, users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

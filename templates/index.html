@@ -24,7 +24,11 @@
             <p>Email: {{.Email}}</p>
             <p>Age: {{.Age}}</p>
 
-            <a href="/edit/{{.ID}}">Edit</a>
+            <a href="/edit/{{.ID}}">Edit</a><br>
+
+            <form action="/delete/{{.ID}}" method="POST">
+                <button type="submit">Delete User</button>
+            </form>
 
             <hr>
         </div>
