@@ -106,3 +106,52 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	users, err := LoadUsers(dataFile)
+	if err != nil {
+		// users = []User{}
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	path := r.URL.Path
+	path = strings.TrimPrefix(path, "/update/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	target := FindUserByID(users, id)
+	if target == nil {
+		http.Error(w, "User Not Found", http.StatusNotFound)
+		return
+	}
+	newName := r.FormValue("name")
+	newAge := r.FormValue("age")
+	newAgeInt, err := strconv.Atoi(newAge)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	newEmail := r.FormValue("email")
+
+	*target = User{
+		ID:    id,
+		Name:  newName,
+		Age:   newAgeInt,
+		Email: newEmail,
+	}
+	err = SaveUsers(dataFile, users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}

@@ -11,5 +11,6 @@ func main() {
 	http.HandleFunc("/health", helper.HealthHandler)
 	http.HandleFunc("/create-user", helper.CreateUser)
 	http.HandleFunc("/edit/", helper.EditUser)
+	http.HandleFunc("/update/", helper.UpdateUser)
 	http.ListenAndServe(":8081", nil)
 }

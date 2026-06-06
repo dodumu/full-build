@@ -5,13 +5,15 @@
     </head>
 
     <body>
-        <form action="/edit">
+        <form action="/update/{{.ID}}" method="POST">
             <label for="name">Change Name</label><br>
             <input type="text" name="name" id="name" value="{{.Name}}"><br>
             <label for="email">Change Email</label><br>
             <input type="text" name="email" id="email" value="{{.Email}}"><br>
             <label for="age">Change Age</label><br>
-            <input type="number" name="age" id="age" value="{{.Age}}">
+            <input type="number" name="age" id="age" value="{{.Age}}"><br>
+
+            <button type="submit">Update User</button>
         </form>
     </body>
 </html>
