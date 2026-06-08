@@ -7,6 +7,13 @@
     <body>
         <h1>Welcome User</h1>
 
+        {{if .Error}}
+        <p>{{.Error}}</p>
+        {{end}}
+
+        {{if .Success}}
+        <p>{{.Success}}</p>
+        {{end}}
         <form action="/create-user" method="Post">
             <input type="text" name="name" placeholder="Name">
             <br>

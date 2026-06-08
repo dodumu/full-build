@@ -48,25 +48,66 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	users, err := LoadUsers(dataFile)
+	if err != nil {
+		users = []User{}
+	}
+
+	renderErrorPage := func(msg string) {
+		tmpl, err := template.ParseFiles("templates/index.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		data := PageData{
+			Users: users,
+			Count: len(users),
+			Error: msg,
+		}
+
+		tmpl.Execute(w, data)
+	}
+
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	age := r.FormValue("age")
+
 	userAge, err := strconv.Atoi(age)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		renderErrorPage("Age must be a valid number")
 		return
 	}
+
+	if name == "" {
+		renderErrorPage("Name is required")
+		return
+	}
+
+	if email == "" {
+		renderErrorPage("Email is required")
+		return
+	}
+
+	if userAge <= 0 {
+		renderErrorPage("Age must be greater than 0")
+		return
+	}
+
 	newUser := User{
+		ID:    GetNextID(users),
 		Name:  name,
 		Email: email,
 		Age:   userAge,
 	}
-	users, err := LoadUsers(dataFile)
+
+	err = CheckUserEmail(users, newUser)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		renderErrorPage(err.Error())
 		return
 	}
-	newUser.ID = len(users) + 1
+
 	users = AddUser(users, newUser)
 
 	err = SaveUsers(dataFile, users)

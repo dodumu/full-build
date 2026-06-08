@@ -130,3 +130,15 @@ func ReturnUserByID(users []User, ID int) *User {
 	}
 	return nil
 }
+
+func GetNextID(users []User) int {
+	maxID := 0
+
+	for _, user := range users {
+		if user.ID > maxID {
+			maxID = user.ID
+		}
+	}
+
+	return maxID + 1
+}

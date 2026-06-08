@@ -10,8 +10,10 @@ type User struct {
 }
 
 type PageData struct {
-	Users []User
-	Count int
+	Users   []User
+	Count   int
+	Error   string
+	Success string
 }
 
 func (t User) Display() {
