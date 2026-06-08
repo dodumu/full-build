@@ -6,6 +6,9 @@ import (
 )
 
 func main() {
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	http.HandleFunc("/users/", helper.GetUserByID)
 	http.HandleFunc("/", helper.Handler)
 	http.HandleFunc("/health", helper.HealthHandler)

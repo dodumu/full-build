@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="/static/style.css">
         <title>Users</title>
     </head>
 
@@ -26,7 +27,7 @@
 
         <h2>Users</h2>
         {{range .Users}}
-        <div>
+        <div class="user-card">
             <p>Name: {{.Name}}</p>
             <p>Email: {{.Email}}</p>
             <p>Age: {{.Age}}</p>
