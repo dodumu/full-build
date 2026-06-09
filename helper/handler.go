@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -10,8 +9,7 @@ import (
 
 var dataFile = "user.json"
 
-
-func RenderTemplate(w http.ResponseWriter, page string, data PageData) {
+func RenderTemplate(w http.ResponseWriter, page string, data any) {
 	tmpl, err := template.ParseFiles(
 		"templates/base.html",
 		"templates/"+page,
@@ -20,15 +18,13 @@ func RenderTemplate(w http.ResponseWriter, page string, data PageData) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err=tmpl.ExecuteTemplate(w, "base", data)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 func Handler(w http.ResponseWriter, r *http.Request) {
-
-	
 
 	users, err := LoadUsers(dataFile)
 	if err != nil {
@@ -45,10 +41,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		Count: len(users),
 	}
 	RenderTemplate(w, "index.html", data)
-}
-
-func HealthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Server is running")
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
