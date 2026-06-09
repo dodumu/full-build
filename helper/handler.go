@@ -10,6 +10,7 @@ import (
 var dataFile = "user.json"
 
 func RenderTemplate(w http.ResponseWriter, page string, data any) {
+	
 	tmpl, err := template.ParseFiles(
 		"templates/base.html",
 		"templates/"+page,
@@ -24,26 +25,10 @@ func RenderTemplate(w http.ResponseWriter, page string, data any) {
 		return
 	}
 }
-func Handler(w http.ResponseWriter, r *http.Request) {
 
-	users, err := LoadUsers(dataFile)
-	if err != nil {
-		users = []User{}
-	}
-
-	// err = tmpl.Execute(w, users)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-	data := PageData{
-		Users: users,
-		Count: len(users),
-	}
-	RenderTemplate(w, "index.html", data)
-}
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
+	
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -55,21 +40,17 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderErrorPage := func(msg string) {
-		tmpl, err := template.ParseFiles("templates/index.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
+		
 		data := PageData{
 			Users: users,
 			Count: len(users),
 			Error: msg,
+		
 		}
 
-		tmpl.Execute(w, data)
+		RenderTemplate(w, "index.html", data)
 	}
-
+	
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	age := r.FormValue("age")
@@ -115,8 +96,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	
+	http.Redirect(w, r, "/?success=created", http.StatusSeeOther)
 }
 
 func EditUser(w http.ResponseWriter, r *http.Request) {
@@ -198,6 +179,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -227,5 +209,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	
+	http.Redirect(w, r, "/?success=deleted", http.StatusSeeOther)
 }
