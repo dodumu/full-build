@@ -10,13 +10,25 @@ import (
 
 var dataFile = "user.json"
 
-func Handler(w http.ResponseWriter, r *http.Request) {
 
-	tmpl, err := template.ParseFiles("templates/index.html")
+func RenderTemplate(w http.ResponseWriter, page string, data PageData) {
+	tmpl, err := template.ParseFiles(
+		"templates/base.html",
+		"templates/"+page,
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	err=tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+func Handler(w http.ResponseWriter, r *http.Request) {
+
+	
 
 	users, err := LoadUsers(dataFile)
 	if err != nil {
@@ -32,11 +44,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		Users: users,
 		Count: len(users),
 	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	RenderTemplate(w, "index.html", data)
 }
 
 func HealthHandler(w http.ResponseWriter, r *http.Request) {

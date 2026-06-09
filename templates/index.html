@@ -1,58 +1,50 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Users</title>
-    <link rel="stylesheet" href="/static/style.css" />
-  </head>
+{{define "title"}}Users{{end}} {{define "content"}}
+<h1>User Management Dashboard</h1>
+<p>Total Users: {{.Count}}</p>
 
-  <body>
-    <h1>User Management Dashboard</h1>
-    <p>Total Users: {{.Count}}</p>
+{{if .Error}}
+<p class="error">{{.Error}}</p>
+{{end}} {{if .Success}}
+<p class="success">{{.Success}}</p>
+{{end}}
 
-    {{if .Error}}
-    <p class="error">{{.Error}}</p>
-    {{end}} {{if .Success}}
-    <p class="success">{{.Success}}</p>
-    {{end}}
+<div class="container">
+  <div class="form-section">
+    <h2>Create User</h2>
 
-    <div class="container">
-      <div class="form-section">
-        <h2>Create User</h2>
+    <form action="/create-user" method="POST">
+      <input type="text" name="name" placeholder="Name" />
 
-        <form action="/create-user" method="POST">
-          <input type="text" name="name" placeholder="Name" />
+      <input type="email" name="email" placeholder="Email" />
 
-          <input type="email" name="email" placeholder="Email" />
+      <input type="number" name="age" placeholder="Age" />
 
-          <input type="number" name="age" placeholder="Age" />
+      <button type="submit">Create User</button>
+    </form>
+  </div>
 
-          <button type="submit">Create User</button>
+  <div class="users-section">
+    <h2>Users</h2>
+
+    {{range .Users}}
+
+    <div class="user-card">
+      <h3>{{.Name}}</h3>
+
+      <p>{{.Email}}</p>
+
+      <p>Age: {{.Age}}</p>
+
+      <div class="actions">
+        <a href="/edit/{{.ID}}"> Edit </a>
+
+        <form action="/delete/{{.ID}}" method="POST">
+          <button type="submit">Delete User</button>
         </form>
       </div>
-
-      <div class="users-section">
-        <h2>Users</h2>
-
-        {{range .Users}}
-
-        <div class="user-card">
-          <h3>{{.Name}}</h3>
-
-          <p>{{.Email}}</p>
-
-          <p>Age: {{.Age}}</p>
-
-          <div class="actions">
-            <a href="/edit/{{.ID}}"> Edit </a>
-
-            <form action="/delete/{{.ID}}" method="POST">
-              <button type="submit">Delete User</button>
-            </form>
-          </div>
-        </div>
-
-        {{end}}
-      </div>
     </div>
-  </body>
-</html>
+
+    {{end}}
+  </div>
+</div>
+{{end}}
